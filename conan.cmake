@@ -158,6 +158,17 @@ macro(_conan_detect_compiler)
             conan_cmake_detect_unix_libcxx(_LIBCXX)
             set(_CONAN_SETTING_COMPILER_LIBCXX ${_LIBCXX})
         endif ()
+
+        if(NOT _CONAN_SETTING_ARCH)
+          execute_process(COMMAND ${CMAKE_C_COMPILER} -dumpmachine OUTPUT_VARIABLE _CONAN_SETTING_ARCH)
+          string(REPLACE "-" ";" _CONAN_SETTING_ARCH ${_CONAN_SETTING_ARCH})
+
+          list(GET _CONAN_SETTING_ARCH 0 _CONAN_SETTING_ARCH)
+
+          if (${_CONAN_SETTING_ARCH} STREQUAL "aarch64")
+            set(_CONAN_SETTING_ARCH armv8)
+          endif()
+        endif()
     elseif (${CMAKE_${LANGUAGE}_COMPILER_ID} STREQUAL Intel)
         string(REPLACE "." ";" VERSION_LIST ${CMAKE_${LANGUAGE}_COMPILER_VERSION})
         list(GET VERSION_LIST 0 MAJOR)
